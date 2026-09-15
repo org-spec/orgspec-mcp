@@ -273,6 +273,30 @@ localhost and nowhere else. Switch to `ORG_CONTEXT_GITHUB` + a fine-grained
 token when several people should reach one server without a clone, or when
 proposals should open pull requests by themselves.
 
+### On your own machine, without a clone — GitHub CLI
+
+If [GitHub CLI](https://cli.github.com) (`gh`) is installed and signed in to
+the account that can see the context repository, its login doubles as the
+token: no clone, no token file, and proposals open pull requests by
+themselves.
+
+```sh
+gh auth login                                   # once; pick the GitHub host your organisation uses
+gh api repos/<owner>/<repo>/contents --jq length  # a number means the server will reach it too
+```
+
+Then register the server with the token resolved at start:
+
+```sh
+claude mcp add-json org-context -s user '{"type":"stdio","command":"/bin/sh",
+  "args":["-c","GITHUB_TOKEN=$(gh auth token) exec npx -y orgspec --github <owner>/<repo>"]}'
+```
+
+Other clients get the same `/bin/sh -c …` command. The web view works the
+same way, with `ORG_CONTEXT_GITHUB=<owner>/<repo>` instead of
+`ORG_CONTEXT_PATH`. A signed-in browser is not enough — the server needs a
+token, and `gh` is what holds one.
+
 ## Development
 
 ```sh
