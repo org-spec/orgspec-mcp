@@ -302,9 +302,10 @@ npx --yes --package ./orgspec-<version>.tgz orgspec --context /path/to/org-conte
 
 The hosted service follows `main`; the npm package follows `v*` tags, see
 [CHANGELOG.md](CHANGELOG.md). `npm version minor|patch` bumps, commits and
-tags; `git push --follow-tags` lets `.github/workflows/release.yml` publish
-through npm trusted publishing (no token secret; the trusted publisher is
-configured once on the package at npmjs.com).
+tags; `git push --follow-tags` lets `.github/workflows/release.yml` **stage**
+the version on npm through trusted publishing (no token secret). Nothing goes
+live until a maintainer approves it — `npm stage approve <stage-id>` with 2FA,
+or on npmjs.com. CI proposes, a human decides.
 
 ## License
 

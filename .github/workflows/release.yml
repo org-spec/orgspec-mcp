@@ -1,7 +1,11 @@
-# Publishes to npm when a version tag is pushed. Uses npm trusted publishing
-# (OIDC): no NPM_TOKEN secret anywhere, which is what lets the package keep
-# "Require 2FA and disallow tokens". Provenance is attached automatically when
-# the repository is public.
+# Stages a release on npm when a version tag is pushed. Uses npm trusted
+# publishing (OIDC): no NPM_TOKEN secret anywhere, which is what lets the
+# package keep "Require 2FA and disallow tokens". Provenance is attached
+# automatically because the repository is public.
+#
+# Staged, not published: CI proposes, a maintainer decides. The staged
+# version goes live only after `npm stage approve <stage-id>` (with 2FA) or
+# approval on npmjs.com — the same rule the spec gives every context repo.
 #
 # One-time setup: npmjs.com → package `orgspec` → Settings → Trusted publisher →
 # GitHub Actions, repository org-spec/orgspec-mcp, workflow release.yml. The
@@ -9,7 +13,8 @@
 # before the first tagged release; no publish by hand is needed.
 #
 # Releasing:  npm version minor|patch   (bumps package.json, commits, tags)
-#             git push --follow-tags
+#             git push --follow-tags     (this workflow stages the version)
+#             npm stage approve <id>     (the id is in the workflow log and on npmjs.com)
 name: release
 
 on:
@@ -36,5 +41,5 @@ jobs:
       - name: Tag must match package.json
         run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
       - run: sh scripts/smoke-pack.sh
-      # prepack builds, prepublishOnly runs the full suite — a red test stops the publish.
-      - run: npm publish
+      # prepack builds, prepublishOnly runs the full suite — a red test stops the release.
+      - run: npm stage publish
