@@ -1,5 +1,5 @@
 {
-  "name": "orgspec-mcp",
+  "name": "orgspec",
   "version": "0.3.0",
   "description": "Reference MCP server for the Org Context Spec — serves organizational context to AI agents and lets them propose changes",
   "license": "MIT",
@@ -20,8 +20,7 @@
     "ai-agents"
   ],
   "bin": {
-    "orgspec-mcp": "dist/index.js",
-    "orgspec-mcp-http": "dist/http.js"
+    "orgspec": "dist/index.js"
   },
   "files": [
     "dist"

@@ -1,7 +1,7 @@
 # orgspec-mcp
 
-Reference MCP server for the [Org Context Spec](https://github.com/org-spec/org-context-spec)
-v0.1. Serves an `org-context/` repository to any MCP-capable AI agent, and lets
+npm package `orgspec` — the reference MCP server for the [Org Context Spec](https://github.com/org-spec/org-context-spec)
+v0.2. Serves an `org-context/` repository to any MCP-capable AI agent, and lets
 agents propose changes that a human approves.
 
 **Status: v0.3, in pilot use.** Two storage backends: a local folder, or a
@@ -35,7 +35,7 @@ files in, same findings out, wherever it runs:
 - `get_context` without arguments appends the top findings, so an agent can
   raise the ones that matter to its task (and propose a fix through the
   normal review loop — never fill gaps unprompted).
-- `npx orgspec-mcp audit [dir] [--json]` prints the full report for a
+- `npx orgspec audit [dir] [--json]` prints the full report for a
   local folder — for the terminal or a CI step. Exit code is always 0.
 - The web view has an **Audit** page per repository.
 
@@ -44,14 +44,14 @@ files in, same findings out, wherever it runs:
 Local folder (a git clone — commits stay local):
 
 ```sh
-npx orgspec-mcp --context /path/to/org-context
+npx orgspec --context /path/to/org-context
 ```
 
 GitHub repository (reads and writes via the REST API — nothing to install or
 clone, works for teammates without git):
 
 ```sh
-GITHUB_TOKEN=ghp_... npx orgspec-mcp --github owner/repo --write-mode propose
+GITHUB_TOKEN=ghp_... npx orgspec --github owner/repo --write-mode propose
 ```
 
 Options:
@@ -82,7 +82,7 @@ Client configuration (Claude Desktop, Claude Code, VS Code, Cursor, …):
   "mcpServers": {
     "org-context": {
       "command": "npx",
-      "args": ["-y", "orgspec-mcp", "--context", "/path/to/org-context"]
+      "args": ["-y", "orgspec", "--context", "/path/to/org-context"]
     }
   }
 }
@@ -216,13 +216,13 @@ approved change becomes a commit — reviewable, diffable, revertable.
 
 ## Self-hosting with the package
 
-The npm package is the same code the hosted service runs. `orgspec-mcp-http`
+The npm package is the same code the hosted service runs. `orgspec serve`
 starts the HTTP server (MCP endpoint, web view, `/setup` and OAuth when a
 GitHub App is configured) as one Node process:
 
 ```sh
 MCP_ACCESS_KEY=<long random string> ORG_CONTEXT_GITHUB=owner/repo \
-  ORG_CONTEXT_GITHUB_TOKEN=github_pat_... npx orgspec-mcp-http
+  ORG_CONTEXT_GITHUB_TOKEN=github_pat_... npx orgspec serve
 ```
 
 The process stores nothing and needs no outbound access beyond the GitHub
@@ -253,7 +253,7 @@ or a first pilot inside an organisation:
 
 ```sh
 git clone <the context repository> ~/org-context
-claude mcp add org-context -s user -- npx -y orgspec-mcp --context ~/org-context
+claude mcp add org-context -s user -- npx -y orgspec --context ~/org-context
 ```
 
 Other MCP clients get the same stdio command. Approved changes become
@@ -264,7 +264,7 @@ The web view over the same clone, visible only to you:
 
 ```sh
 ORG_CONTEXT_PATH=~/org-context ORG_CONTEXT_ALLOW_OPEN=1 \
-  ORG_CONTEXT_WEB_KEY=<key> PORT=3456 npx orgspec-mcp-http
+  ORG_CONTEXT_WEB_KEY=<key> PORT=3456 npx orgspec serve
 # → http://localhost:3456/c/<key>/  (audit at /c/<key>/audit)
 ```
 
@@ -294,8 +294,8 @@ scratch prefix and runs both binaries — what CI does in the `pack` job. To try
 the unpublished package in a client, point it at the tarball:
 
 ```sh
-npm pack                                  # → orgspec-mcp-<version>.tgz
-npx --yes --package ./orgspec-mcp-<version>.tgz orgspec-mcp --context /path/to/org-context
+npm pack                                  # → orgspec-<version>.tgz
+npx --yes --package ./orgspec-<version>.tgz orgspec --context /path/to/org-context
 ```
 
 ## Releases
@@ -303,7 +303,8 @@ npx --yes --package ./orgspec-mcp-<version>.tgz orgspec-mcp --context /path/to/o
 The hosted service follows `main`; the npm package follows `v*` tags, see
 [CHANGELOG.md](CHANGELOG.md). `npm version minor|patch` bumps, commits and
 tags; `git push --follow-tags` lets `.github/workflows/release.yml` publish
-through npm trusted publishing (no token secret).
+through npm trusted publishing (no token secret; the trusted publisher is
+configured once on the package at npmjs.com).
 
 ## License
 

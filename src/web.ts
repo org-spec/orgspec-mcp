@@ -259,7 +259,7 @@ export async function renderContext(
 
     return html(404, page({ title: "Not found", orgName, base, active: "", body: `<h1>Not found</h1>`, footer, home, who, hasConnect }));
   } catch (err) {
-    console.error("org-context-mcp web error:", err);
+    console.error("orgspec web error:", err);
     return plain(500, "Internal server error.");
   }
 }

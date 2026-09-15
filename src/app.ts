@@ -90,7 +90,7 @@ async function gh<T>(token: string, method: string, path: string, body?: unknown
       Authorization: `Bearer ${token}`,
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
-      "User-Agent": "org-context-mcp",
+      "User-Agent": "orgspec",
       ...(body ? { "Content-Type": "application/json" } : {}),
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -196,7 +196,7 @@ export function open<T extends { t: string; exp?: number }>(cfg: AppConfig, blob
 export async function exchangeCode(cfg: AppConfig, code: string): Promise<string> {
   const res = await fetch("https://github.com/login/oauth/access_token", {
     method: "POST",
-    headers: { Accept: "application/json", "Content-Type": "application/json", "User-Agent": "org-context-mcp" },
+    headers: { Accept: "application/json", "Content-Type": "application/json", "User-Agent": "orgspec" },
     body: JSON.stringify({ client_id: cfg.clientId, client_secret: cfg.clientSecret, code }),
   });
   const data = (await res.json()) as { access_token?: string; error_description?: string };

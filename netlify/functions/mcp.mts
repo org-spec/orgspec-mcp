@@ -85,7 +85,7 @@ export default async (req: Request): Promise<Response> => {
     return await transport.handleRequest(req);
   } catch (err) {
     // Never log headers or the request here — the Authorization header is a tenant's GitHub token.
-    console.error("org-context-mcp function error:", err);
+    console.error("orgspec function error:", err);
     return json(500, { error: "Internal server error" });
   }
 };

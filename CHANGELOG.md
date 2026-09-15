@@ -10,8 +10,10 @@ hosted service at mcp.orgspec.org follows `main`; the npm package follows the
 
 First version published to npm.
 
-- Package renamed `org-context-mcp` → `orgspec-mcp`; binaries `orgspec-mcp`
-  (stdio) and `orgspec-mcp-http` (streamable HTTP server for self-hosting).
+- Package renamed `org-context-mcp` → `orgspec` (replaces the 0.0.1 name
+  reservation). One binary, `orgspec`: MCP over stdio by default,
+  `orgspec serve` for the streamable HTTP server (self-hosting),
+  `orgspec audit <dir>` for the report.
 - GitHub App onboarding (`/setup`, `oc1.` keys) and MCP OAuth for ChatGPT,
   claude.ai and other OAuth-capable clients (`oc2.` tokens, `search`/`fetch`).
 - Portal and per-repository web view with Mermaid rendering; audit (top

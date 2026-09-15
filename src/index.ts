@@ -31,6 +31,12 @@ const contextRoot = path.resolve(
 );
 
 async function main(): Promise<void> {
+  if (process.argv[2] === "serve") {
+    // The HTTP server (MCP endpoint, web view, /setup, OAuth) — configured by
+    // environment variables, documented at the top of http.ts. Self-hosting entry.
+    await import("./http.js");
+    return;
+  }
   if (process.argv[2] === "audit") {
     // Reproducible report over a local context folder — for CI and the terminal.
     // Exit code is always 0: findings are signals, not a gate.
@@ -49,7 +55,7 @@ async function main(): Promise<void> {
       process.env.ORG_CONTEXT_GITHUB_TOKEN ?? process.env.GITHUB_TOKEN ?? "";
     if (!token) {
       console.error(
-        "org-context-mcp: --github requires a token in ORG_CONTEXT_GITHUB_TOKEN or GITHUB_TOKEN",
+        "orgspec: --github requires a token in ORG_CONTEXT_GITHUB_TOKEN or GITHUB_TOKEN",
       );
       process.exit(1);
     }
@@ -63,14 +69,14 @@ async function main(): Promise<void> {
       const stat = await fs.stat(contextRoot);
       if (!stat.isDirectory()) throw new Error("not a directory");
     } catch {
-      console.error(`org-context-mcp: context path is not a directory: ${contextRoot}`);
+      console.error(`orgspec: context path is not a directory: ${contextRoot}`);
       process.exit(1);
     }
     source = new LocalSource(contextRoot);
   }
   const server = buildServer(source, writeMode, githubRepo ? serverName(githubRepo) : "org-context");
   await server.connect(new StdioServerTransport());
-  console.error(`org-context-mcp: serving ${source.describe()} (write mode: ${writeMode})`);
+  console.error(`orgspec: serving ${source.describe()} (write mode: ${writeMode})`);
 }
 
 void main();

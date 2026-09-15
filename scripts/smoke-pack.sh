@@ -17,11 +17,11 @@ bin="$work/install/node_modules/.bin"
 
 # stdio binary: the audit subcommand runs over a folder and always exits 0.
 ctx="$work/ctx"; mkdir -p "$ctx"; printf '# Org context — smoke\n' > "$ctx/README.md"
-"$bin/orgspec-mcp" audit "$ctx" --json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const r=JSON.parse(s);if(!Array.isArray(r.findings))process.exit(1);console.log("audit ok:",r.findings.length,"findings")})'
+"$bin/orgspec" audit "$ctx" --json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const r=JSON.parse(s);if(!Array.isArray(r.findings))process.exit(1);console.log("audit ok:",r.findings.length,"findings")})'
 
 # HTTP binary: must fail closed (a default repo without MCP_ACCESS_KEY is refused).
-if ORG_CONTEXT_PATH="$ctx" "$bin/orgspec-mcp-http" >/dev/null 2>&1; then
-  echo "orgspec-mcp-http started without MCP_ACCESS_KEY — should have refused"; exit 1
+if ORG_CONTEXT_PATH="$ctx" "$bin/orgspec" serve >/dev/null 2>&1; then
+  echo "orgspec serve started without MCP_ACCESS_KEY — should have refused"; exit 1
 fi
 echo "http fail-closed ok"
 echo "smoke ok"

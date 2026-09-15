@@ -71,7 +71,7 @@ export class GitHubSource implements ContextSource {
         Authorization: `Bearer ${token}`,
         Accept: raw ? "application/vnd.github.raw+json" : "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "org-context-mcp",
+        "User-Agent": "orgspec",
         ...(body ? { "Content-Type": "application/json" } : {}),
       },
       body: body ? JSON.stringify(body) : undefined,
@@ -244,7 +244,7 @@ export class GitHubSource implements ContextSource {
       head: branch,
       base,
       body:
-        `Proposed context change from org-context-mcp.\n\n` +
+        `Proposed context change from orgspec.\n\n` +
         `${fileList}\n\n` +
         `The model recommends, a human decides — review and merge to accept.`,
     });

@@ -59,7 +59,7 @@ const accessKey = process.env.MCP_ACCESS_KEY;
 if (envSource && !accessKey && process.env.ORG_CONTEXT_ALLOW_OPEN !== "1") {
   // Fail closed: a default repo without a key would be readable by anyone who reaches the port.
   console.error(
-    `org-context-mcp: refusing to serve ${envSource.describe()} without MCP_ACCESS_KEY. ` +
+    `orgspec: refusing to serve ${envSource.describe()} without MCP_ACCESS_KEY. ` +
       `Set it, or ORG_CONTEXT_ALLOW_OPEN=1 to run open for local development.`,
   );
   process.exit(1);
@@ -149,7 +149,7 @@ const httpServer = createServer(async (req, res) => {
     await transport.handleRequest(req, res);
   } catch (err) {
     // Never log headers here — in BYO mode the Authorization header is a tenant's GitHub token.
-    console.error("org-context-mcp http error:", err);
+    console.error("orgspec http error:", err);
     if (!res.headersSent) {
       fail(500, "Internal server error");
     }
@@ -161,7 +161,7 @@ httpServer.listen(port, () => {
     ? `default repo ${envSource.describe()} (auth: ${accessKey ? "bearer key" : "OPEN — set MCP_ACCESS_KEY"}), plus`
     : "no default repo —";
   console.error(
-    `org-context-mcp: http://localhost:${port}/mcp — ${defaultRepo} bring-your-own-repo via ` +
+    `orgspec: http://localhost:${port}/mcp — ${defaultRepo} bring-your-own-repo via ` +
       `X-Org-Context-Repo + GitHub token` +
       (webConfig && envSource ? `; web view at /c/<ORG_CONTEXT_WEB_KEY>/` : ""),
   );

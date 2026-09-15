@@ -43,7 +43,7 @@ function start(env: Record<string, string>): Promise<{ proc: ChildProcess; stder
     let settled = false;
     proc.stderr!.on("data", (d) => {
       stderr += d;
-      if (!settled && stderr.includes("org-context-mcp: http://")) {
+      if (!settled && stderr.includes("orgspec: http://")) {
         settled = true;
         resolve({ proc, stderr });
       }

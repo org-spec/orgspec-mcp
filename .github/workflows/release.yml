@@ -3,10 +3,10 @@
 # "Require 2FA and disallow tokens". Provenance is attached automatically when
 # the repository is public.
 #
-# One-time setup, after the FIRST publish (done by hand, with 2FA, from a
-# machine — npm needs the package to exist before a trusted publisher can be
-# configured on it): npmjs.com → package → Settings → Trusted publisher →
-# GitHub Actions, repository org-spec/orgspec-mcp, workflow release.yml.
+# One-time setup: npmjs.com → package `orgspec` → Settings → Trusted publisher →
+# GitHub Actions, repository org-spec/orgspec-mcp, workflow release.yml. The
+# package already exists on npm (0.0.1 name reservation), so this can be done
+# before the first tagged release; no publish by hand is needed.
 #
 # Releasing:  npm version minor|patch   (bumps package.json, commits, tags)
 #             git push --follow-tags

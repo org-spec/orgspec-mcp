@@ -9,7 +9,7 @@ import { CANONICAL_GAPS } from "./onboarding.js";
  *
  * Findings are signals, never grades: no score, no ranking of people, and
  * nothing here blocks a merge. Same files in, same findings out — for the
- * agent (get_context), for CI (`org-context-mcp audit`), and for humans
+ * agent (get_context), for CI (`orgspec audit`), and for humans
  * (the web view).
  */
 
