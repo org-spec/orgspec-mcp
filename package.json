@@ -1,0 +1,55 @@
+{
+  "name": "orgspec-mcp",
+  "version": "0.3.0",
+  "description": "Reference MCP server for the Org Context Spec — serves organizational context to AI agents and lets them propose changes",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://orgspec.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/org-spec/orgspec-mcp.git"
+  },
+  "bugs": "https://github.com/org-spec/orgspec-mcp/issues",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "orgspec",
+    "org-context",
+    "organizational-context",
+    "context-as-code",
+    "ai-agents"
+  ],
+  "bin": {
+    "orgspec-mcp": "dist/index.js",
+    "orgspec-mcp-http": "dist/http.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "test": "tsc -p tsconfig.test.json && node --test dist-test/test/*.test.js",
+    "start": "node dist/index.js",
+    "start:http": "node dist/http.js",
+    "vendor:template": "node scripts/vendor-template.mjs",
+    "version": "node scripts/sync-version.mjs && git add src/version.ts",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test",
+    "pack:smoke": "sh scripts/smoke-pack.sh"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,54 @@
+# CI for pull requests and pushes. The same `npm test` runs as Netlify's build
+# command (the deploy gate); this gives the status check that branch
+# protection can require before anything reaches main, plus a dependency
+# audit. No secrets are needed: the suite runs against generated key material
+# and a stubbed GitHub.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+
+  # The tarball a user would install: packs, installs into a scratch prefix,
+  # runs both binaries. Catches a stale or missing dist/ before a release does.
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: sh scripts/smoke-pack.sh

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dist-test/
+
+# Local Netlify folder
+.netlify
+
+# npm pack output (README suggests packing at the root)
+*.tgz

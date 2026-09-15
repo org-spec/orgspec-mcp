@@ -1,0 +1,58 @@
+# Git-linked Netlify deploy: static landing page + the MCP function.
+# Functions are auto-detected in netlify/functions and bundled by Netlify.
+#
+# The build command IS the deploy gate: `npm test` type-checks src/ and test/
+# and runs the suite (unit, OAuth/setup flows against a stubbed GitHub, and a
+# black-box run of the Node server). A red test fails the build, and the
+# previous deploy stays live. Netlify installs dependencies (including
+# devDependencies — NODE_ENV is deliberately not set) before this runs.
+[build]
+  publish = "public"
+  command = "npm test"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Security headers for the STATIC files (landing page, landing.js). Netlify
+# applies these rules to static responses only — function responses carry the
+# same policy from src/headers.ts. Keep the two in step.
+#
+# CSP: same-origin scripts only (the landing page has no inline script), inline
+# CSS allowed (the shell carries its stylesheet inline), no framing, no <base>.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self' https:; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# Host-based routing for the orgspec.org names (added 2026-09-08). The names
+# are permanent, the hosting behind them is not.
+#
+#   mcp.orgspec.org      → the MCP endpoint at the ROOT (no /mcp path needed;
+#                          the function itself still lives at /mcp, so the old
+#                          <site>.netlify.app/mcp URL keeps working unchanged)
+#   app.orgspec.org      → landing page + web views /c/<key>/ (default site)
+#   orgspec.org (apex)   → redirect to app until the spec site exists
+
+# OAuth discovery must be reachable on the MCP host (RFC 9728) — first match wins.
+[[redirects]]
+  from = "https://mcp.orgspec.org/.well-known/*"
+  to = "/.well-known/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://mcp.orgspec.org/*"
+  to = "/mcp"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://orgspec.org/*"
+  to = "https://app.orgspec.org/:splat"
+  status = 301
+  force = true

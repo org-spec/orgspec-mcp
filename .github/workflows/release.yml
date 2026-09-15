@@ -1,0 +1,40 @@
+# Publishes to npm when a version tag is pushed. Uses npm trusted publishing
+# (OIDC): no NPM_TOKEN secret anywhere, which is what lets the package keep
+# "Require 2FA and disallow tokens". Provenance is attached automatically when
+# the repository is public.
+#
+# One-time setup, after the FIRST publish (done by hand, with 2FA, from a
+# machine — npm needs the package to exist before a trusted publisher can be
+# configured on it): npmjs.com → package → Settings → Trusted publisher →
+# GitHub Actions, repository org-spec/orgspec-mcp, workflow release.yml.
+#
+# Releasing:  npm version minor|patch   (bumps package.json, commits, tags)
+#             git push --follow-tags
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      # Trusted publishing needs npm >= 11.5; Node 22 ships an older npm.
+      - run: npm install -g npm@latest
+      - run: npm ci
+      - name: Tag must match package.json
+        run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      - run: sh scripts/smoke-pack.sh
+      # prepack builds, prepublishOnly runs the full suite — a red test stops the publish.
+      - run: npm publish
