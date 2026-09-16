@@ -180,7 +180,9 @@ MCP_ACCESS_KEY=some-long-random-string npm run start:http
 
 With a default repo configured the server refuses to start without
 `MCP_ACCESS_KEY`; set `ORG_CONTEXT_ALLOW_OPEN=1` to run it open on a local
-machine.
+machine. Open mode binds to `127.0.0.1` only, so nothing on the network can
+reach it; with a key the server listens on every interface. `ORG_CONTEXT_HOST`
+overrides the bind address in either mode.
 
 Deploy to Netlify (git-linked — every push deploys):
 
@@ -268,8 +270,10 @@ ORG_CONTEXT_PATH=~/org-context ORG_CONTEXT_ALLOW_OPEN=1 \
 # → http://localhost:3456/c/<key>/  (audit at /c/<key>/audit)
 ```
 
-`ORG_CONTEXT_ALLOW_OPEN=1` skips the MCP access key, which is fine on
-localhost and nowhere else. Switch to `ORG_CONTEXT_GITHUB` + a fine-grained
+`ORG_CONTEXT_ALLOW_OPEN=1` skips the MCP access key. The server then binds to
+the loopback interface only, so nothing else on the network can reach it —
+with a key it listens on every interface (`ORG_CONTEXT_HOST` overrides both).
+Switch to `ORG_CONTEXT_GITHUB` + a fine-grained
 token when several people should reach one server without a clone, or when
 proposals should open pull requests by themselves.
 

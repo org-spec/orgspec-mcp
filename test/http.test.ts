@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { spawn, type ChildProcess } from "node:child_process";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
-import { tmpdir } from "node:os";
+import { networkInterfaces, tmpdir } from "node:os";
 import { join } from "node:path";
 
 /**
@@ -151,4 +151,31 @@ test("unknown routes: JSON 404, no stack traces", async () => {
   const res = await fetch(`${base}/nope`);
   assert.equal(res.status, 404);
   assert.match(await res.text(), /Not found/);
+});
+
+test("open mode (no key) binds to the loopback interface only", async () => {
+  const p = await freePort();
+  const res = await start({ PORT: String(p), ORG_CONTEXT_PATH: dir, MCP_ACCESS_KEY: "", ORG_CONTEXT_ALLOW_OPEN: "1" });
+  try {
+    assert.equal(res.exited, undefined, `server failed to start: ${res.stderr}`);
+    assert.match(res.stderr, /orgspec: http:\/\/127\.0\.0\.1:/, "log states the real bind address");
+    assert.equal((await fetch(`http://127.0.0.1:${p}/c/x/`)).status, 404, "reachable on loopback");
+    const lan = Object.values(networkInterfaces()).flat().find((i) => i && !i.internal && i.family === "IPv4");
+    if (lan) {
+      await assert.rejects(fetch(`http://${lan.address}:${p}/c/x/`), `reachable from the LAN address ${lan.address}`);
+    }
+  } finally {
+    res.proc.kill();
+  }
+});
+
+test("a keyed server binds to every interface, and the log says so", async () => {
+  const p = await freePort();
+  const res = await start({ PORT: String(p), ORG_CONTEXT_PATH: dir, MCP_ACCESS_KEY: KEY });
+  try {
+    assert.equal(res.exited, undefined, `server failed to start: ${res.stderr}`);
+    assert.match(res.stderr, /orgspec: http:\/\/localhost:\d+\/mcp \(all interfaces\)/);
+  } finally {
+    res.proc.kill();
+  }
 });

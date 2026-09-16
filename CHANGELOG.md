@@ -6,7 +6,18 @@ self-hosted installation must read about; a **patch** bump otherwise. The
 hosted service at mcp.orgspec.org follows `main`; the npm package follows the
 `v*` tags.
 
-## 0.3.0 — unreleased
+## 0.3.1 — 2026-09-16
+
+- Security: `orgspec serve` in open mode (a default repo without
+  `MCP_ACCESS_KEY`) now binds to `127.0.0.1` only. It used to listen on every
+  interface, exposing an unauthenticated endpoint to the LAN while the log
+  said `localhost`. Keyed and bring-your-own-repo servers still bind to every
+  interface; new `ORG_CONTEXT_HOST` overrides the bind address in either mode.
+  The log now states the real address. Reported from a self-hosting pilot.
+- Dropped the unused `esbuild` devDependency (its install script tripped npm's
+  install-time controls in CI).
+
+## 0.3.0 — 2026-09-15
 
 First version published to npm.
 

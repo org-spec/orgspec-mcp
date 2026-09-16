@@ -30,6 +30,8 @@ import { renderWeb, type WebConfig } from "./web.js";
  *                            Required when a default repo is configured; the
  *                            server refuses to start without it unless
  *   ORG_CONTEXT_ALLOW_OPEN=1 explicitly opts in (local development only)
+ *   ORG_CONTEXT_HOST          address to bind. Default: 127.0.0.1 when running open
+ *                            (loopback only), every interface otherwise
  *   ORG_CONTEXT_WEB_KEY      enables the read-only web view of the default repo
  *                            at /c/<key>/ — a capability link for humans
  *   ORG_CONTEXT_WEB_CONTACT  optional email for the view's "Suggest a change" link
@@ -68,6 +70,14 @@ const webConfig: WebConfig | undefined = process.env.ORG_CONTEXT_WEB_KEY
   ? { key: process.env.ORG_CONTEXT_WEB_KEY, contact: process.env.ORG_CONTEXT_WEB_CONTACT }
   : undefined;
 const port = Number(process.env.PORT ?? 3000);
+
+// Bind address. A default repo served OPEN (no MCP_ACCESS_KEY) is for one
+// machine, so it binds to the loopback interface only — Node's default of every
+// interface would hand an unauthenticated endpoint to the whole LAN. With a key,
+// or in bring-your-own-repo mode, the server binds to every interface so a
+// container or VM can be reached. ORG_CONTEXT_HOST overrides either way.
+const open = envSource !== undefined && !accessKey;
+const host = process.env.ORG_CONTEXT_HOST ?? (open ? "127.0.0.1" : undefined);
 
 const httpServer = createServer(async (req, res) => {
   const fail = (status: number, error: string, headers: Record<string, string> = {}) => {
@@ -156,12 +166,12 @@ const httpServer = createServer(async (req, res) => {
   }
 });
 
-httpServer.listen(port, () => {
+httpServer.listen({ port, host }, () => {
   const defaultRepo = envSource
-    ? `default repo ${envSource.describe()} (auth: ${accessKey ? "bearer key" : "OPEN — set MCP_ACCESS_KEY"}), plus`
+    ? `default repo ${envSource.describe()} (auth: ${accessKey ? "bearer key" : "OPEN, loopback only — set MCP_ACCESS_KEY to serve the network"}), plus`
     : "no default repo —";
   console.error(
-    `orgspec: http://localhost:${port}/mcp — ${defaultRepo} bring-your-own-repo via ` +
+    `orgspec: http://${host ?? "localhost"}:${port}/mcp${host ? "" : " (all interfaces)"} — ${defaultRepo} bring-your-own-repo via ` +
       `X-Org-Context-Repo + GitHub token` +
       (webConfig && envSource ? `; web view at /c/<ORG_CONTEXT_WEB_KEY>/` : ""),
   );
