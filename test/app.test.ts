@@ -20,7 +20,7 @@ test("issueKey/verifyKey: oc1 key is bound to installation and repo", () => {
 test("verifyKey: tampering and malformed input", () => {
   const key = issueKey(cfg, INST, REPO);
   const [p, i, m] = key.split(".");
-  assert.equal(verifyKey(cfg, `${p}.${i}.${m.slice(0, -1)}x`, REPO), undefined, "mac changed");
+  assert.equal(verifyKey(cfg, `${p}.${i}.${m.slice(0, -1)}${m.endsWith("x") ? "y" : "x"}`, REPO), undefined, "mac changed");
   assert.equal(verifyKey(cfg, `${p}.9999.${m}`, REPO), undefined, "installation changed");
   assert.equal(verifyKey(cfg, `${p}.abc.${m}`, REPO), undefined, "non-numeric installation");
   assert.equal(verifyKey(cfg, `${p}.${i}.`, REPO), undefined, "empty mac");
