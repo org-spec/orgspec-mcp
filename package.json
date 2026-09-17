@@ -1,6 +1,6 @@
 {
   "name": "orgspec",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Reference MCP server for the Org Context Spec — serves organizational context to AI agents and lets them propose changes",
   "license": "MIT",
   "type": "module",
