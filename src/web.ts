@@ -1,7 +1,8 @@
 import type { ContextSource } from "./source.js";
 import { equalSecrets } from "./secret.js";
-import { escapeHtml, extractTeaser, extractTitle, renderInline, renderMarkdown } from "./markdown.js";
+import { escapeHtml, extractTitle, renderMarkdown } from "./markdown.js";
 import { audit, renderAudit } from "./audit.js";
+import { chainCrumbs, overviewBody } from "./overview.js";
 import { shell } from "./theme.js";
 import { connectHtml } from "./connect.js";
 import { MERMAID_TAIL } from "./mermaid.js";
@@ -13,8 +14,8 @@ import { MERMAID_TAIL } from "./mermaid.js";
  * Access is a capability URL: /c/<key>/… where <key> is ORG_CONTEXT_WEB_KEY.
  * Whoever holds the link can read (never write) the context — the same trust
  * model as a shared document link. The view is deliberately not a file
- * browser: the overview renders the organization (its constraints, goals,
- * teams, areas) in the spec's reading order.
+* browser: the overview renders the organization as a chain — why, what, who
+ * and where — derived from the files and the links between them (overview.ts).
  */
 
 export interface WebConfig {
@@ -22,18 +23,6 @@ export interface WebConfig {
   /** Optional email shown as a "Suggest a change" link on every page. */
   contact?: string;
 }
-
-/** Section order and display names follow the spec's reading order. */
-const SECTIONS: [prefix: string, title: string][] = [
-  ["organisation/", "Organisation"],
-  ["teams/", "Teams"],
-  ["products/", "Products & services"],
-  ["system/", "Systems"],
-  ["method/", "Method"],
-];
-
-/** Within organisation/, the reading order puts constraints first. */
-const ORG_ORDER = ["constraints", "goals", "principles", "ways-of-working", "glossary"];
 
 function page(opts: {
   title: string;
@@ -98,45 +87,6 @@ function orgNameOf(files: { path: string; content: string }[], source: ContextSo
   const readme = files.find((f) => f.path === "README.md");
   const title = readme ? extractTitle(readme.content) : undefined;
   return (title ?? source.describe()).replace(/^Org context — /, "");
-}
-
-function overviewBody(files: { path: string; content: string }[], base: string): string {
-  const card = (f: { path: string; content: string }): string => {
-    const href = `${base}/f/${f.path.split("/").map(encodeURIComponent).join("/")}`;
-    const title = extractTitle(f.content) ?? f.path;
-    // The whole card is a link — flatten markdown links in the teaser to
-    // plain text so no <a> nests inside it.
-    const teaser = extractTeaser(f.content)?.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, "$1");
-    return (
-      `<a class="card" href="${href}"><h3>${escapeHtml(title)}</h3>` +
-      (teaser ? `<p>${renderInline(teaser)}</p>` : "") +
-      `<span class="path">${escapeHtml(f.path)}</span></a>`
-    );
-  };
-
-  const sections: string[] = [];
-  const claimed = new Set<string>();
-  for (const [prefix, title] of SECTIONS) {
-    let inSection = files.filter((f) => f.path.startsWith(prefix));
-    if (prefix === "organisation/") {
-      inSection = [...inSection].sort((a, b) => {
-        const rank = (f: { path: string }): number => {
-          const stem = f.path.slice(prefix.length).replace(/\.md$/, "");
-          const idx = ORG_ORDER.indexOf(stem);
-          return idx === -1 ? ORG_ORDER.length : idx;
-        };
-        return rank(a) - rank(b) || a.path.localeCompare(b.path);
-      });
-    }
-    for (const f of inSection) claimed.add(f.path);
-    if (inSection.length === 0) continue;
-    sections.push(`<h2>${escapeHtml(title)}</h2><div class="cards">${inSection.map(card).join("")}</div>`);
-  }
-  const rest = files.filter((f) => !claimed.has(f.path) && f.path !== "README.md");
-  if (rest.length > 0) {
-    sections.push(`<h2>Other</h2><div class="cards">${rest.map(card).join("")}</div>`);
-  }
-  return sections.join("\n");
 }
 
 /** A finished page, runtime-agnostic — adapters turn it into a real response. */
@@ -216,7 +166,7 @@ export async function renderContext(
         files.length === 0
           ? `<h1>Nothing here yet</h1><p class="lede">This context repository is empty — a normal starting point. Content appears here as it is created and approved.</p>`
           : `<h1>${escapeHtml(orgName)}</h1><p class="lede">The organizational context AI agents read before they work here — and the humans' window into it. Every statement was proposed, reviewed, and accepted by a person.</p>` +
-            overviewBody(files, base) +
+            overviewBody(files, base, audit(files)) +
             suggestBlock(contact, `Suggestion for the org context`);
       return html(200, page({ title: orgName, orgName, base, active: "overview", body, footer, home, who, hasConnect }));
     }
@@ -248,9 +198,8 @@ export async function renderContext(
       if (!file) {
         return html(404, page({ title: "Not found", orgName, base, active: "", body: `<h1>Not found</h1><p class="lede">No such context file: <code>${escapeHtml(rel)}</code></p>`, footer, home, who, hasConnect }));
       }
-      const crumbs = `<div class="crumbs"><a href="${base}/">Overview</a> / ${escapeHtml(rel)}</div>`;
       const body =
-        crumbs +
+        chainCrumbs(files, rel, base) +
         renderMarkdown(file.content, linkResolver(base, file.path)) +
         suggestBlock(contact, `Suggestion for ${rel}`);
       const title = extractTitle(file.content) ?? rel;

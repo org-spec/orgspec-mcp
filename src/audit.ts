@@ -39,6 +39,17 @@ export type Rule =
   | "unverified"
   | "open-questions";
 
+/** Rules that mean something is wrong, as opposed to open — honestly marked, waiting for a decision. */
+export const WRONG_RULES: ReadonlySet<Rule> = new Set<Rule>([
+  "missing-file",
+  "broken-link",
+  "unreachable",
+  "placeholder",
+  "owner-todo",
+  "horizon-passed",
+  "goal-untraced",
+]);
+
 export const RULES: Record<Rule, string> = {
   "missing-file": "a file the spec's reading order expects is not there",
   "broken-link": "a relative link points at nothing in the repository",
@@ -56,7 +67,7 @@ export const RULES: Record<Rule, string> = {
 const isMarkdown = (p: string) => p.endsWith(".md");
 
 /** POSIX-resolve `href` relative to the directory of `from`. */
-function resolveLink(from: string, href: string): string {
+export function resolveLink(from: string, href: string): string {
   const clean = href.split("#")[0].split("?")[0];
   if (!clean) return from;
   const parts = from.split("/").slice(0, -1);
@@ -70,7 +81,7 @@ function resolveLink(from: string, href: string): string {
 
 const isExternal = (href: string) => /^([a-z]+:|#|\/\/)/i.test(href);
 
-function links(content: string): { href: string; line: number }[] {
+export function links(content: string): { href: string; line: number }[] {
   const out: { href: string; line: number }[] = [];
   content.split("\n").forEach((text, i) => {
     for (const m of text.matchAll(/\[[^\]]*\]\(([^)\s]+)\)/g)) out.push({ href: m[1], line: i + 1 });
@@ -79,18 +90,18 @@ function links(content: string): { href: string; line: number }[] {
 }
 
 /** Files a link target covers: the file itself, or everything under a directory link. */
-function targets(resolved: string, paths: Set<string>): string[] {
+export function targets(resolved: string, paths: Set<string>): string[] {
   if (paths.has(resolved)) return [resolved];
   const prefix = resolved.endsWith("/") ? resolved : `${resolved}/`;
   return [...paths].filter((p) => p.startsWith(prefix));
 }
 
-interface Table {
+export interface Table {
   header: string[];
   rows: { cells: string[]; line: number }[];
 }
 
-function tables(content: string): Table[] {
+export function tables(content: string): Table[] {
   const lines = content.split("\n");
   const out: Table[] = [];
   for (let i = 0; i + 1 < lines.length; i++) {
@@ -105,8 +116,8 @@ function tables(content: string): Table[] {
   return out;
 }
 
-const col = (header: string[], re: RegExp) => header.findIndex((h) => re.test(h));
-const blank = (cell: string | undefined) =>
+export const col = (header: string[], re: RegExp) => header.findIndex((h) => re.test(h));
+export const blank = (cell: string | undefined) =>
   !cell ||
   /^(—|–|-|\?|n\/a|tbd|okänt|unknown|saknas)$/i.test(cell) ||
   /\bTODO\b|att fastställa|ej fastställ|to be (measured|determined|defined|set)|not (yet )?(measured|set)/i.test(cell);
@@ -278,15 +289,24 @@ export function renderAudit(findings: Finding[], opts: { title?: string; limit?:
     `${findings.length} finding${findings.length > 1 ? "s" : ""} in ${files.size} file${files.size === 1 ? "" : "s"}.\n\n` +
     [...byRule.entries()].map(([r, n]) => `- **${r}** ×${n} — ${RULES[r]}`).join("\n") +
     "\n";
+  // Two groups, read differently: what is wrong, and what is open — marked
+  // by the authors themselves and waiting for a decision. Same rules either way.
   const shown = opts.limit ? findings.slice(0, opts.limit) : findings;
   const sections: string[] = [];
-  let current: string | undefined;
-  for (const f of shown) {
-    if (f.file !== current) {
-      current = f.file;
-      sections.push(`\n## ${f.file || "(repository)"}\n`);
+  for (const [group, heading] of [
+    [shown.filter((f) => WRONG_RULES.has(f.rule)), "Needs fixing"],
+    [shown.filter((f) => !WRONG_RULES.has(f.rule)), "Open"],
+  ] as [Finding[], string][]) {
+    if (group.length === 0) continue;
+    sections.push(`\n## ${heading}`);
+    let current: string | undefined;
+    for (const f of group) {
+      if (f.file !== current) {
+        current = f.file;
+        sections.push(`\n### ${f.file || "(repository)"}\n`);
+      }
+      sections.push(`- ${f.rule}${f.line ? ` (line ${f.line})` : ""}: ${f.message}`);
     }
-    sections.push(`- ${f.rule}${f.line ? ` (line ${f.line})` : ""}: ${f.message}`);
   }
   const more = shown.length < findings.length ? `\n\n…and ${findings.length - shown.length} more — the full report is on the repository's audit page.` : "";
   return head + sections.join("\n") + more + "\n";

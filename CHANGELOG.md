@@ -6,6 +6,19 @@ self-hosted installation must read about; a **patch** bump otherwise. The
 hosted service at mcp.orgspec.org follows `main`; the npm package follows the
 `v*` tags.
 
+## 0.4.0 — unreleased
+
+- Web view: the overview is now the organisation as a chain, top to bottom —
+  **why** (constraints, goals, principles, ways of working, shown as gaps when
+  missing), **what** (one entry per product area with vision, owning team and
+  effect-goal count; the README's own word for the areas labels the band),
+  **who · where** (teams with what they own, the system map and the method as
+  one line each). Derived from titles, first lines and links — nothing to
+  configure. A line above the bands says what waits for a decision. File pages
+  get breadcrumbs that climb the chain (product → team, team → products).
+- Audit report grouped into "Needs fixing" and "Open" — the same rules, read
+  differently: what is wrong, and what the authors marked as open themselves.
+
 ## 0.3.1 — 2026-09-16
 
 - Security: `orgspec serve` in open mode (a default repo without
