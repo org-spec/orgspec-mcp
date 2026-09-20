@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Org Context Spec — the why of your organisation, as Markdown in Git</title>
+<meta name="description" content="An open specification for keeping the why of an organisation — goals, constraints, products, teams — as plain Markdown in a Git repository you own. People review it; any AI agent can read it.">
+<style>
+:root {
+  --bg: #faf9f7; --card: #ffffff; --ink: #21201d; --muted: #6f6d67;
+  --line: #e7e4de; --accent: #2f6f5f; --accent-soft: #eaf2ef;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+header.site { border-bottom: 1px solid var(--line); background: var(--card); }
+header.site .inner {
+  max-width: 44rem; margin: 0 auto; padding: 1rem 1.25rem;
+  display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap;
+}
+header.site .org { font-weight: 650; font-size: 1.05rem; }
+header.site .org small { font-weight: 400; color: var(--muted); margin-left: .5rem; font-size: .85rem; }
+nav { margin-left: auto; }
+nav a { color: var(--muted); margin-left: 1rem; font-size: .95rem; }
+main { max-width: 44rem; margin: 0 auto; padding: 2.5rem 1.25rem 3.5rem; }
+footer.site {
+  max-width: 44rem; margin: 0 auto; padding: 0 1.25rem 2.5rem;
+  color: var(--muted); font-size: .85rem;
+}
+h1 { font-size: 2rem; line-height: 1.25; margin: 0 0 .75rem; letter-spacing: -.01em; }
+h2 { font-size: 1.25rem; margin: 2.4rem 0 .6rem; letter-spacing: -.01em; }
+p { margin: .55rem 0; }
+.lede { color: var(--muted); font-size: 1.05rem; }
+.note { color: var(--muted); font-size: .9rem; }
+code {
+  background: #f1efe9; border-radius: 4px; padding: .1em .35em;
+  font: .88em ui-monospace, "SF Mono", Menlo, monospace;
+}
+pre { background: #f1efe9; border-radius: 8px; padding: .9rem 1rem; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+ol, ul { padding-left: 1.4rem; }
+li { margin: .4rem 0; }
+.button {
+  display: inline-block; padding: .55rem 1.1rem; background: var(--accent); color: #fff;
+  border-radius: 8px; font-weight: 600;
+}
+.button:hover { text-decoration: none; filter: brightness(1.08); }
+.links { margin-top: 1.2rem; }
+.links small { margin-left: .75rem; }
+</style>
+</head>
+<body>
+<header class="site"><div class="inner">
+  <span class="org">Org Context Spec<small>v0.2 draft</small></span>
+  <nav><a href="https://github.com/org-spec/orgspec">GitHub</a></nav>
+</div></header>
+<main>
+
+<h1>The why of your organisation, where people can review it and agents can read it.</h1>
+<p class="lede">Your tracker knows <em>what</em> is being built. Your code knows <em>how</em>.
+  <em>Why</em> lives in documents, meetings and people's heads. People cope. Agents cannot.</p>
+<p>Org Context Spec is an open specification for writing it down: plain Markdown, in a
+  Git repository you own.</p>
+<p class="links"><a class="button" href="https://github.com/org-spec/orgspec/blob/main/SPEC.md">Read the specification</a>
+  <small class="note"><a href="https://github.com/org-spec/orgspec/tree/main/template/org-context">Starter template</a>
+  · <a href="https://github.com/org-spec/orgspec/tree/main/example/org-context">Worked example</a></small></p>
+
+<h2>A context repository</h2>
+<pre><code>org-context/
+  README.md        the agent's entry point: reading order + writing rules
+  organisation/    constraints, goals, principles, ways of working
+  products/        per product area: vision, effect goals, who it is for
+  teams/           the bridge: team → tracker → product areas → systems
+  system/          thin pointers into the engineering layer
+  method/          your own rules for how content is created</code></pre>
+<p>A few pages, written to be read in full — not an archive to search.</p>
+
+<h2>Four rules</h2>
+<ol>
+  <li><strong>External objects are referenced, not copied.</strong> Issues stay in the tracker, goals in the
+    goal system: <code>ref: jira:PARK-231</code>.</li>
+  <li><strong>The engineering layer is a map, not content.</strong> Architecture lives
+    in the code repositories; the context only points to it.</li>
+  <li><strong>Thin and honest beats thick and aspirational.</strong> Write what is true
+    today; mark what is unverified as unverified.</li>
+  <li><strong>The model recommends, a human decides.</strong> Agents propose changes as
+    pull requests; they never write truth directly.</li>
+</ol>
+
+<h2>Isn't this just our wiki with a connector?</h2>
+<p>A wiki connector gives an agent search over everything anyone ever wrote — current
+  and stale, decided and merely discussed, with nothing to tell them apart. A context
+  repository is the other end: the few pages the organisation has decided are true,
+  every change approved by a person. They work together: the context says what holds
+  and points to where the detail lives.</p>
+
+<h2>Tools are optional</h2>
+<p>Any agent that can read files can use a context repository — no server, no account.
+  When files are not enough, <a href="https://github.com/org-spec/orgspec-mcp">orgspec-mcp</a>
+  is the open-source reference server, also available hosted at
+  <a href="https://app.orgspec.org">app.orgspec.org</a>.</p>
+
+</main>
+<footer class="site">Extracted from daily use, not designed up front — and
+  <a href="https://github.com/org-spec/orgspec/blob/main/CONTRIBUTING.md">that is how it changes</a>.<br>
+  Org Context Spec is an open specification, MIT licensed ·
+  <a href="https://github.com/org-spec">github.com/org-spec</a> ·
+  hosted service operated by Lean State AB</footer>
+</body>
+</html>
