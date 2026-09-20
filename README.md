@@ -1,4 +1,4 @@
-# orgspec
+# orgspec — MCP server
 
 [![npm](https://img.shields.io/npm/v/orgspec)](https://www.npmjs.com/package/orgspec)
 [![ci](https://github.com/org-spec/orgspec-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/org-spec/orgspec-mcp/actions/workflows/ci.yml)
@@ -12,7 +12,7 @@ Your tracker knows what is being built; your code knows how. `orgspec` serves
 the rest — goals, constraints, products, teams, systems and methods, kept as
 plain Markdown in a Git repository you own — to any MCP-capable agent: Claude,
 ChatGPT, Cursor, VS Code, Copilot. It is the reference MCP server for the
-[Org Context Spec](https://github.com/org-spec/org-context-spec) v0.2.
+[Org Context Spec](https://github.com/org-spec/orgspec) v0.2.
 
 ```sh
 npx orgspec --context /path/to/org-context
@@ -21,8 +21,8 @@ npx orgspec --context /path/to/org-context
 No context repository yet? Try it on Parkway, the spec's fictional example:
 
 ```sh
-git clone https://github.com/org-spec/org-context-spec
-claude mcp add parkway -- npx -y orgspec --context "$PWD/org-context-spec/example/org-context"
+git clone https://github.com/org-spec/orgspec
+claude mcp add parkway -- npx -y orgspec --context "$PWD/orgspec/example/org-context"
 ```
 
 Or use the hosted service at [orgspec.org](https://orgspec.org): install the

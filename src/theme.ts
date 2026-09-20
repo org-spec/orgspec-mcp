@@ -124,7 +124,7 @@ details { margin: 1.2rem 0; } summary { cursor: pointer; color: var(--muted); }
 
 export const BRAND = "orgspec";
 export const FOOTER =
-  `<a href="https://github.com/org-spec/org-context-spec">Org Context Spec</a> — an open specification · ` +
+  `<a href="https://github.com/org-spec/orgspec">Org Context Spec</a> — an open specification · ` +
   `hosted service operated by Lean State AB`;
 
 export interface NavItem {

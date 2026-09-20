@@ -6,8 +6,13 @@ self-hosted installation must read about; a **patch** bump otherwise. The
 hosted service at mcp.orgspec.org follows `main`; the npm package follows the
 `v*` tags.
 
-## Unreleased
+## 0.4.1 — 2026-09-20
 
+- The spec repository is now `github.com/org-spec/orgspec` (formerly
+  `org-context-spec`; the old address redirects). The served starter templates,
+  the web view and the landing page link to the new address, and the starter
+  README now carries its reading order as links — how agents and the audit
+  reach every file.
 - Web view: an organisation file written as a list — the shape the spec's
   template gives constraints and principles — shows its first three lines in
   the overview instead of an empty slot.

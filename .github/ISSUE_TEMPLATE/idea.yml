@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Start from the situation, not the feature. The server is small on purpose — [CONTRIBUTING.md](https://github.com/org-spec/orgspec-mcp/blob/main/CONTRIBUTING.md) lists what it will not grow into.
-        Ideas about the layout, the file shapes or the writing rules belong in the [spec repository](https://github.com/org-spec/org-context-spec/issues).
+        Ideas about the layout, the file shapes or the writing rules belong in the [spec repository](https://github.com/org-spec/orgspec/issues).
   - type: textarea
     id: situation
     attributes:

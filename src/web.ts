@@ -156,7 +156,7 @@ export async function renderContext(
     const orgName = files.length > 0 ? orgNameOf(files, source) : source.describe();
     const footer =
       `Served from ${escapeHtml(source.describe())} · ` +
-      `follows the <a href="https://github.com/org-spec/org-context-spec">Org Context Spec</a>` +
+      `follows the <a href="https://github.com/org-spec/orgspec">Org Context Spec</a>` +
       (files.some((f) => f.path === "README.md")
         ? ` · <a href="${base}/f/README.md">how this repository works</a>`
         : "");

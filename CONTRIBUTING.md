@@ -1,7 +1,7 @@
 # Contributing
 
 Thanks for looking. This is the reference server for the
-[Org Context Spec](https://github.com/org-spec/org-context-spec); it is small
+[Org Context Spec](https://github.com/org-spec/orgspec); it is small
 on purpose, and the most useful contributions keep it that way.
 
 ## Where things go
@@ -13,7 +13,7 @@ on purpose, and the most useful contributions keep it that way.
   you the work if the answer is "that belongs in the spec" or "that is
   deliberately left out".
 - **The layout, the file shapes, the writing rules** — that is the spec, not
-  the server: [org-context-spec](https://github.com/org-spec/org-context-spec/issues).
+  the server: [orgspec](https://github.com/org-spec/orgspec/issues).
 - **A vulnerability** — not an issue. See [SECURITY.md](SECURITY.md).
 
 ## What the server will not grow into

@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/org-spec/orgspec-mcp/security/advisories/new
     about: Privately, to the maintainers. Not as a public issue.
   - name: The spec — layout, file shapes, writing rules
-    url: https://github.com/org-spec/org-context-spec/issues
+    url: https://github.com/org-spec/orgspec/issues
     about: Questions and proposals about the Org Context Spec itself.
