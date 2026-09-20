@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a vulnerability
+    url: https://github.com/org-spec/orgspec-mcp/security/advisories/new
+    about: Privately, to the maintainers. Not as a public issue.
+  - name: The spec — layout, file shapes, writing rules
+    url: https://github.com/org-spec/org-context-spec/issues
+    about: Questions and proposals about the Org Context Spec itself.

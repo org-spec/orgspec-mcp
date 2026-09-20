@@ -1,0 +1,44 @@
+name: Bug report
+description: Something does not work as the README says it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A vulnerability is not a bug report — use [private reporting](https://github.com/org-spec/orgspec-mcp/security/advisories/new) instead.
+        Please leave tokens, keys and your organisation's context out of the issue.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: The command or client configuration (secrets removed), and the steps.
+      render: sh
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: How are you running it?
+      options:
+        - npx orgspec — local folder (stdio)
+        - npx orgspec — GitHub repository (stdio)
+        - orgspec serve — self-hosted HTTP
+        - Hosted service (orgspec.org)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "The npm version (`npm view orgspec version` shows the latest; a pinned `orgspec@x.y.z` is in your client configuration). For the hosted service, the date is enough."
+  - type: input
+    id: client
+    attributes:
+      label: MCP client
+      placeholder: Claude Code, Claude Desktop, ChatGPT, Cursor, VS Code …

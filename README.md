@@ -1,10 +1,45 @@
-# orgspec-mcp
+# orgspec
 
-npm package `orgspec` — the reference MCP server for the [Org Context Spec](https://github.com/org-spec/org-context-spec)
-v0.2. Serves an `org-context/` repository to any MCP-capable AI agent, and lets
-agents propose changes that a human approves.
+[![npm](https://img.shields.io/npm/v/orgspec)](https://www.npmjs.com/package/orgspec)
+[![ci](https://github.com/org-spec/orgspec-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/org-spec/orgspec-mcp/actions/workflows/ci.yml)
+[![node](https://img.shields.io/node/v/orgspec)](package.json)
+[![license](https://img.shields.io/npm/l/orgspec)](LICENSE)
 
-**Status: v0.3, in pilot use.** Two storage backends: a local folder, or a
+**Give your AI agents the *why* of your organisation — and let them propose
+changes that a human approves.**
+
+Your tracker knows what is being built; your code knows how. `orgspec` serves
+the rest — goals, constraints, products, teams, systems and methods, kept as
+plain Markdown in a Git repository you own — to any MCP-capable agent: Claude,
+ChatGPT, Cursor, VS Code, Copilot. It is the reference MCP server for the
+[Org Context Spec](https://github.com/org-spec/org-context-spec) v0.2.
+
+```sh
+npx orgspec --context /path/to/org-context
+```
+
+No context repository yet? Try it on Parkway, the spec's fictional example:
+
+```sh
+git clone https://github.com/org-spec/org-context-spec
+claude mcp add parkway -- npx -y orgspec --context "$PWD/org-context-spec/example/org-context"
+```
+
+Or use the hosted service at [orgspec.org](https://orgspec.org): install the
+GitHub App on a repository, get a ready command — nothing to run yourself.
+
+- **Read.** `get_context` hands the agent the reading order, the writing rules
+  and any file — an empty repository gets onboarding instructions instead.
+- **Propose.** `propose_context_change` turns one coherent change into one pull
+  request. The model recommends, a human decides.
+- **Audit.** Reproducible signals about what the context does not say yet.
+  Never a score, never a gate.
+- **See.** A read-only web view of the same files, for the people who do not
+  live in Git:
+
+![The web view of the Parkway example: the organisation as a chain — why, what, who and where](docs/overview.png)
+
+**Status: 0.4, in pilot use.** Two storage backends: a local folder, or a
 GitHub repository reached through the REST API (no local clone, no git binary —
 in propose mode every change becomes a pull request). Two transports: stdio
 (local) and streamable HTTP (one Node process to self-host, or Netlify). An

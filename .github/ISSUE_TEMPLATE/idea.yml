@@ -1,0 +1,26 @@
+name: Idea
+description: Something the server should do, or do differently
+labels: [idea]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Start from the situation, not the feature. The server is small on purpose — [CONTRIBUTING.md](https://github.com/org-spec/orgspec-mcp/blob/main/CONTRIBUTING.md) lists what it will not grow into.
+        Ideas about the layout, the file shapes or the writing rules belong in the [spec repository](https://github.com/org-spec/org-context-spec/issues).
+  - type: textarea
+    id: situation
+    attributes:
+      label: The situation
+      description: Who was trying to do what, and where did it stop?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would have helped
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: What you do today instead
