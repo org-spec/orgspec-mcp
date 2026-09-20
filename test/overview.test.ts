@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { audit, renderAudit } from "../src/audit.js";
-import { chain, chainCrumbs, decisionLine, effectGoals, overviewBody } from "../src/overview.js";
+import { bulletLeads, chain, chainCrumbs, decisionLine, effectGoals, overviewBody } from "../src/overview.js";
 
 /**
  * The overview is derived, never configured: these fixtures pin what it reads
@@ -85,4 +85,16 @@ test("audit report groups what is wrong before what is open", () => {
   assert.ok(fixing > -1 && open > fixing, md);
   assert.match(md.slice(fixing, open), /owner-todo/);
   assert.match(md.slice(open), /effect-goal-incomplete/);
+});
+
+test("overview: a list-shaped organisation file shows its first lines, not an empty slot", () => {
+  const principles =
+    "# Principles\n\n> Only the ones that changed a decision.\n\n- **One booking, one screen.** If a flow needs a second\n  screen, split the product.\n- Card data is never stored; payments go through the provider. Source: `ref: policy:X`.\n- Third\n- Fourth\n";
+  assert.deepEqual(bulletLeads(principles), {
+    leads: ["One booking, one screen", "Card data is never stored", "Third"],
+    more: 1,
+  });
+  const html = overviewBody([...files, { path: "organisation/principles.md", content: principles }], base, []);
+  assert.match(html, /<li>One booking, one screen<\/li>/);
+  assert.match(html, /\+ 1 more/);
 });

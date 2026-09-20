@@ -42,6 +42,24 @@ function sectionText(content: string, re: RegExp): string | undefined {
   return extractTeaser(rest, 140);
 }
 
+/**
+ * The top-level bullets of a file, each as its bold lead or first sentence —
+ * the spec's template writes constraints and principles as a quote and a
+ * list, which has no teaser paragraph to show.
+ */
+export function bulletLeads(content: string, max = 3): { leads: string[]; more: number } {
+  const bullets: string[] = [];
+  for (const line of content.split(/\r?\n/)) {
+    if (/^[-*] /.test(line)) bullets.push(line.slice(2).trim());
+    else if (bullets.length > 0 && /^\s+\S/.test(line)) bullets[bullets.length - 1] += ` ${line.trim()}`;
+  }
+  const leads = bullets.slice(0, max).map((b) => {
+    const lead = (/^\*\*(.+?)\*\*/.exec(b)?.[1] ?? /^(.+?[.;])(\s|$)/.exec(b)?.[1] ?? b).replace(/[*_`]/g, "").replace(/[.;]$/, "");
+    return lead.length > 90 ? `${lead.slice(0, lead.lastIndexOf(" ", 89))}…` : lead;
+  });
+  return { leads, more: Math.max(0, bullets.length - max) };
+}
+
 /** Effect-goal rows in a product file, and how many lack a value. */
 export function effectGoals(content: string): { total: number; incomplete: number } {
   let total = 0;
@@ -165,12 +183,17 @@ export function overviewBody(files: ContextFile[], base: string, findings: Findi
       why.push(`<div class="slot gap"><h3>${name}</h3><p>not yet — ${what}</p></div>`);
       continue;
     }
+    const teaser = extractTeaser(f.content, 120);
     const heads = stem === "goals" ? [...f.content.matchAll(/^##\s+(.+)$/gm)].map((m) => m[1].replace(/[*_`]/g, "").trim()).slice(0, 6) : [];
+    // No headings and no teaser paragraph: the file is a list — show its first lines.
+    const { leads, more } = heads.length || teaser ? { leads: [], more: 0 } : bulletLeads(f.content);
+    const items = [...heads, ...leads].map((h) => `<li>${escapeHtml(h)}</li>`);
+    if (more) items.push(`<li class="note">+ ${more} more</li>`);
     why.push(
-      slot(
-        `<a href="${href(f.path)}">${escapeHtml(title(f))}</a>`,
-        heads.length ? "" : escapeHtml(extractTeaser(f.content, 120) ?? ""),
-      ).replace("</h3>", `</h3>${heads.length ? `<ul>${heads.map((h) => `<li>${escapeHtml(h)}</li>`).join("")}</ul>` : ""}`),
+      slot(`<a href="${href(f.path)}">${escapeHtml(title(f))}</a>`, items.length ? "" : escapeHtml(teaser ?? "")).replace(
+        "</h3>",
+        `</h3>${items.length ? `<ul>${items.join("")}</ul>` : ""}`,
+      ),
     );
   }
   for (const f of files.filter((f) => f.path.startsWith("organisation/") && !ORG_SLOTS.some(([s]) => f.path === `organisation/${s}.md`))) {

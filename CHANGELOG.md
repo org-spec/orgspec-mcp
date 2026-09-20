@@ -6,7 +6,13 @@ self-hosted installation must read about; a **patch** bump otherwise. The
 hosted service at mcp.orgspec.org follows `main`; the npm package follows the
 `v*` tags.
 
-## 0.4.0 — unreleased
+## Unreleased
+
+- Web view: an organisation file written as a list — the shape the spec's
+  template gives constraints and principles — shows its first three lines in
+  the overview instead of an empty slot.
+
+## 0.4.0 — 2026-09-17
 
 - Web view: the overview is now the organisation as a chain, top to bottom —
   **why** (constraints, goals, principles, ways of working, shown as gaps when
