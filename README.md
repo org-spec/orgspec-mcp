@@ -25,7 +25,7 @@ git clone https://github.com/org-spec/orgspec
 claude mcp add parkway -- npx -y orgspec --context "$PWD/orgspec/example/org-context"
 ```
 
-Or use the hosted service at [orgspec.org](https://orgspec.org): install the
+Or use the hosted service at [app.orgspec.org](https://app.orgspec.org): install the
 GitHub App on a repository, get a ready command — nothing to run yourself.
 
 - **Read.** `get_context` hands the agent the reading order, the writing rules
@@ -44,6 +44,13 @@ GitHub repository reached through the REST API (no local clone, no git binary �
 in propose mode every change becomes a pull request). Two transports: stdio
 (local) and streamable HTTP (one Node process to self-host, or Netlify). An
 Azure DevOps backend is planned.
+
+## Why not just a wiki connector?
+
+A wiki connector searches everything anyone ever wrote. `orgspec` serves the
+few pages the organisation has decided are true — short enough to read in full,
+every change approved by a person. They work together; the reasoning is on
+[orgspec.org](https://orgspec.org).
 
 ## Tools
 
