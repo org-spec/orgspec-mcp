@@ -53,6 +53,13 @@
   status = 200
   force = true
 
+# www is not a name anyone is given, but people type it.
+[[redirects]]
+  from = "https://www.orgspec.org/*"
+  to = "https://orgspec.org/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "https://orgspec.org/"
   to = "/spec.html"
