@@ -36,7 +36,9 @@
 #                          the function itself still lives at /mcp, so the old
 #                          <site>.netlify.app/mcp URL keeps working unchanged)
 #   app.orgspec.org      → landing page + web views /c/<key>/ (default site)
-#   orgspec.org (apex)   → redirect to app until the spec site exists
+#   orgspec.org (apex)   → the open standard's page (public/spec.html) at the
+#                          root; every other path redirects to app, so links
+#                          from before the split (orgspec.org/setup) still land
 
 # OAuth discovery must be reachable on the MCP host (RFC 9728) — first match wins.
 [[redirects]]
@@ -48,6 +50,12 @@
 [[redirects]]
   from = "https://mcp.orgspec.org/*"
   to = "/mcp"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://orgspec.org/"
+  to = "/spec.html"
   status = 200
   force = true
 

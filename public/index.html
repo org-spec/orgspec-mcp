@@ -103,9 +103,8 @@ details { margin: 1.2rem 0; } summary { cursor: pointer; color: var(--muted); }
 
 <div class="hero">
 <h1>Your organisation's context, for every AI you use.</h1>
-<p class="lede">Goals, principles, constraints, teams, ways of working — in a git
-  repository you own, following the open <em>Org Context Spec</em>. Agents read it
-  before they work and propose changes as pull requests a person reviews.
+<p class="lede">Connect your context repository once. Claude, ChatGPT, Cursor and Copilot
+  read it before they work — and propose changes as pull requests a person reviews.
   <strong>The model recommends, a human decides.</strong></p>
 <p><a class="button" href="/setup">Install the GitHub App</a>
   &nbsp; <small class="note" id="signed">Already connected? <a href="/login">Sign in</a> to read your context.</small></p>
@@ -121,21 +120,16 @@ details { margin: 1.2rem 0; } summary { cursor: pointer; color: var(--muted); }
     <p>Sign in to read the context in the browser — the overview, every file, and the audit of what it does not say yet.</p></a>
 </div>
 <p class="note">Nothing is stored on this server: your repository and your keys travel with each
-  request and are gone when it ends. Revoke access any time by uninstalling the App.</p>
+  request — in plaintext while it is processed — and are gone when it ends. Revoke access any
+  time by uninstalling the App. Rather run it yourself? The same server is MIT licensed:
+  <a href="https://github.com/org-spec/orgspec-mcp"><code>npx orgspec</code></a>.</p>
 
 <h2>Your context repository</h2>
-<p>Any GitHub repository, private is fine, with markdown files in this structure:</p>
-<pre><code>README.md              ← reading order and writing rules; agents start here
-organisation/          ← goals, principles, constraints, ways of working
-products/&lt;area&gt;/product.md   ← per product or service: vision, effect goals, audience
-products/&lt;area&gt;/actors/      ← who it is for, with what is known and what is assumed
-teams/                 ← per team: what it delivers and where the work lives
-method/                ← how work is written and improved here
-system/                ← pointers to the systems that own the details</code></pre>
-<p>Start small: a README and one product file is enough to be useful. Or start from
-  nothing — connect an <strong>empty repository</strong> and ask your AI to set it up.
-  It gets the starter templates from the server, interviews you about what you know,
-  and seeds the repository through the same review loop that later maintains it.</p>
+<p>Any GitHub repository, private is fine, that follows the
+  <a href="https://orgspec.org">Org Context Spec</a> — a handful of Markdown files. No
+  repository yet? Connect an <strong>empty</strong> one and ask your AI to set it up: it
+  gets the starter templates from the server, interviews you about what you know, and
+  seeds the repository through the same review loop that later maintains it.</p>
 
 <details>
 <summary>Alternative: connect with a fine-grained access token</summary>
@@ -162,7 +156,7 @@ system/                ← pointers to the systems that own the details</code></
 </details>
 
 </main>
-<footer class="site"><a href="https://github.com/org-spec/orgspec">Org Context Spec</a> — an open
+<footer class="site"><a href="https://orgspec.org">Org Context Spec</a> — an open
   specification with a starter template and a worked example · hosted service operated by Lean State AB</footer>
 
 <script src="/landing.js"></script>
